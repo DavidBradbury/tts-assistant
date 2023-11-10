@@ -1,0 +1,219 @@
+:root {
+  --color-white: #fffdf0;
+  --color-black: hsla(210, 100%, 6%, 0.8);
+  --color-light-grey: hsl(37, 27%, 95%);
+  --color-light-brown: hsla(37, 27%, 30%, 0.3);
+  --color-brown: hsla(37, 27%, 30%, 0.5);
+  --color-dark-brown: hsla(37, 27%, 30%, 0.9);
+  --color-grey-alpha: hsla(37, 27%, 99%, 0.95);
+  --color-blue: hsl(195, 60%, 30%);
+  --color-shadow-dark: hsla(210, 100%, 15%, 0.2);
+  --color-shadow-light: hsla(187, 36%, 33%, 0.1);
+
+  --border-size: 2px;
+  --size-1x: 6px;
+  --size-2x: 12px;
+  --size-3x: 18px;
+  --size-4x: 24px;
+  --size-6x: 36px;
+  --size-10x: 60px;
+}
+
+body {
+  height: 100vh;
+  margin: 0;
+  background: var(--color-white) url("./tts-bg.jpg") no-repeat;
+  background-size: auto 65%;
+  background-position: center bottom -25%;
+  font-family: "PT Sans", sans-serif;
+  font-size: 16px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Nunito", sans-serif;
+  font-weight: 900;
+}
+
+select,
+input,
+button {
+  padding: var(--size-1x) var(--size-2x);
+  margin-right: var(--size-2x);
+  min-width: 150px;
+}
+
+button {
+  font-family: "Nunito", sans-serif;
+  font-weight: 900;
+  font-size: 1rem;
+  background-color: var(--color-blue);
+  border: none;
+  color: var(--color-white);
+  border-radius: var(--size-1x);
+  padding: var(--size-2x) var(--size-6x);
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+
+ul li {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--size-1x) var(--size-2x);
+  margin: var(--size-1x);
+  background-color: var(--color-light-grey);
+  color: var(--color-dark-brown);
+  text-decoration: none;
+  font-weight: 400;
+  border-radius: var(--size-1x);
+  border: var(--border-size) solid var(--color-light-brown);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+ul li:hover {
+  border: var(--border-size) solid var(--color-dark-brown);
+}
+
+ul li button {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  color: var(--color-dark-brown);
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  min-width: auto;
+}
+
+
+.container {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--size-6x) var(--size-3x);
+  width: calc(100% - var(--size-6x));
+  margin: var(--size-4x) auto;
+  max-width: 1000px;
+}
+
+.toolbar {
+  font-family: "Nunito", sans-serif;
+  font-weight: 900;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--size-2x);
+  background-color: var(--color-light-grey);
+  min-height: var(--size-4x);
+  box-shadow: 0 var(--size-1x) 0px var(--color-shadow-light);
+  font-size: 1.5rem !important;
+  margin-bottom: var(--size-1x);
+}
+
+.sidebar {
+  grid-column: 2;
+  background-color: var(--color-white);
+}
+
+.sidebar ul {
+  margin: 0;
+  padding: var(--size-2x) var(--size-1x);
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.main-area {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  background-color: var(--color-white);
+}
+
+.main-area,
+.sidebar,
+.footer {
+  background: var(--color-grey-alpha);
+  box-shadow: 0 var(--size-2x) 0px var(--color-shadow-dark);
+  outline: var(--border-size) solid var(--color-black);
+  border-radius: var(--size-1x);
+}
+
+.app-name {
+  font-size: calc(var(--size-2x) + var(--size-2x));
+  margin: 0;
+}
+
+.content-area {
+  padding: var(--size-3x) var(--size-2x);
+  overflow-y: auto;
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+  min-height: calc(var(--size-10x) + var(--size-5x));
+  border: none;
+  margin: 0;
+  padding: var(--size-2x);
+  box-sizing: border-box;
+  background: var(--color-grey-alpha);
+  border: var(--border-size) solid var(--color-brown);
+  border-radius: var(--size-1x);
+  line-height: 1.5;
+}
+
+.footer {
+  display: grid;
+  grid-template-rows: auto auto;
+  padding: var(--size-2x);
+  grid-column: 1 / span 2;
+}
+
+.footer-top {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: var(--size-3x);
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.filename-input {
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  .container {
+    display: block;
+  }
+
+  .container>* {
+    margin: var(--size-2x) 0;
+    box-shadow: none;
+  }
+
+  .footer-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-top>* {
+    width: 100%;
+    margin-bottom: var(--size-1x);
+  }
+}
