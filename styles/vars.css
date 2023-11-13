@@ -1,0 +1,38 @@
+:root {
+  --hue-yellow: 50;
+  --hue-blue: 210;
+  --hue-brown: 32;
+  --hue-teal: 195;
+  --hue-red: 0;
+
+  --color-light-yellow: hsl(var(--hue-yellow) 100% 97% / 100%);
+  --color-light-ui-yellow: hsl(var(--hue-yellow) 30% 97% / 100%);
+
+  --color-light-tan: hsl(var(--hue-brown) 27% 95% / 100%);
+  --color-light-tan-alpha: hsl(var(--hue-brown) 27% 99% / 95%);
+  --color-light-brown: hsl(var(--hue-brown) 27% 30% / 30%);
+  --color-brown: hsl(var(--hue-brown) 27% 30% / 50%);
+  --color-dark-brown: hsl(var(--hue-brown) 27% 30% / 90%);
+
+  --color-blue: hsl(var(--hue-teal) 60% 30% / 100%);
+  --color-dark-blue: hsl(var(--hue-blue) 100% 6% / 80%);
+
+  --color-dark-teal: hsl(var(--hue-teal) 80% 10% / 100%);
+  --color-shadow-light: hsl(var(--hue-teal) 36% 33% / 10%);
+  --color-shadow-dark: hsl(var(--hue-blue) 100% 15% / 20%);
+
+  --color-red: hsl(var(--hue-red) 60% 30% / 100%);
+
+  --color-white: #fff;
+  --color-black: #000;
+
+  --border-size: 2px;
+  --size-half: 3px;
+  --size-1x: 6px;
+  --size-2x: 12px;
+  --size-3x: 18px;
+  --size-4x: 24px;
+  --size-5x: 30px;
+  --size-6x: 36px;
+  --size-10x: 60px;
+}

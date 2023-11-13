@@ -1,0 +1,101 @@
+body {
+  height: 100vh;
+  margin: 0;
+  background: var(--color-light-yellow) url("./tts-bg.jpg") no-repeat;
+  background-size: auto 65%;
+  background-position: center bottom -25%;
+  background-attachment: fixed;
+  font-family: "PT Sans", sans-serif;
+  font-size: 16px;
+}
+
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4,
+h5,
+.h5,
+h6,
+.h6 {
+  margin: 0;
+  font-family: "Nunito", sans-serif;
+  font-weight: 900;
+}
+
+h1,
+.h1 {
+  font-size: 1.5rem;
+}
+
+h2,
+.h2 {
+  font-size: 1.25rem;
+}
+
+h3,
+.h3 {
+  font-size: 1.125rem;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+  line-height: calc(1ex / 0.32);
+}
+
+a {
+  display: inline-block;
+  color: var(--color-blue);
+  text-decoration: none;
+  padding: 0 var(--size-1x);
+  margin: var(--size-half) 0;
+  border-radius: var(--size-10x);
+  background-color: var(--color-light-tan-alpha);
+  box-shadow: 0 0 var(--size-half) var(--color-shadow-dark);
+}
+
+a:hover {
+  color: var(--color-dark-brown);
+  box-shadow: 0 0 var(--size-half) var(--color-dark-brown);
+}
+
+menu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: var(--size-2x);
+}
+
+input,
+select,
+textarea {
+  border: var(--border-size) solid var(--color-light-brown);
+  border-radius: var(--size-1x);
+  background-color: var(--color-light-tan);
+  padding: var(--size-1x) var(--size-2x);
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--color-dark-brown);
+}
+
+input,
+textarea {
+  background-color: var(--color-white);
+}
+
+textarea {
+  width: 100%;
+}
+
+select {
+  cursor: pointer;
+}

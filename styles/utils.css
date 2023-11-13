@@ -1,0 +1,323 @@
+/* Display utilities */
+.block {
+  display: block;
+}
+
+.flex {
+  display: flex;
+}
+
+.grid {
+  display: grid;
+}
+
+.mobile-block {
+  display: block;
+}
+
+.mobile-flex {
+  display: flex;
+}
+
+.mobile-grid {
+  display: grid;
+}
+
+.hidden {
+  display: none;
+}
+
+/* TODO, replace with CSS variable when supported by env() or other */
+@media (min-width: 768px) {
+
+  .desktop-block {
+    display: block;
+  }
+
+  .desktop-flex {
+    display: flex;
+  }
+
+  .desktop-grid {
+    display: grid;
+  }
+}
+
+/* Flexbox alignment utilities */
+.flex-start {
+  justify-content: start;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.wrap {
+  flex-wrap: wrap;
+}
+
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+/* Text utilities */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Margin utilities */
+.ml-auto {
+  margin-left: auto;
+}
+
+.mr-auto {
+  margin-right: auto;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.m-1 {
+  margin: var(--size-1x);
+}
+
+.mt-1 {
+  margin-top: var(--size-1x);
+}
+
+.mt-2 {
+  margin-top: var(--size-2x);
+}
+
+.mt-3 {
+  margin-top: var(--size-3x);
+}
+
+.mr-1 {
+  margin-right: var(--size-1x);
+}
+
+.mr-2 {
+  margin-right: var(--size-2x);
+}
+
+.mr-3 {
+  margin-right: var(--size-3x);
+}
+
+.mb-1 {
+  margin-bottom: var(--size-1x);
+}
+
+.mb-2 {
+  margin-bottom: var(--size-2x);
+}
+
+.mb-3 {
+  margin-bottom: var(--size-3x);
+}
+
+.ml-1 {
+  margin-left: var(--size-1x);
+}
+
+.ml-2 {
+  margin-left: var(--size-2x);
+}
+
+.ml-3 {
+  margin-left: var(--size-3x);
+}
+
+.mx-1 {
+  margin-left: var(--size-1x);
+  margin-right: var(--size-1x);
+}
+
+.mx-2 {
+  margin-left: var(--size-2x);
+  margin-right: var(--size-2x);
+}
+
+.mx-3 {
+  margin-left: var(--size-3x);
+  margin-right: var(--size-3x);
+}
+
+.my-1 {
+  margin-top: var(--size-1x);
+  margin-bottom: var(--size-1x);
+}
+
+.my-2 {
+  margin-top: var(--size-2x);
+  margin-bottom: var(--size-2x);
+}
+
+.my-3 {
+  margin-top: var(--size-3x);
+  margin-bottom: var(--size-3x);
+}
+
+/* Padding utilities */
+.p-2 {
+  padding: var(--size-2x);
+}
+
+.p-3 {
+  padding: var(--size-3x);
+}
+
+.p-4 {
+  padding: var(--size-4x);
+}
+
+.px-1 {
+  padding-left: var(--size-1x);
+  padding-right: var(--size-1x);
+}
+
+.px-2 {
+  padding-left: var(--size-2x);
+  padding-right: var(--size-2x);
+}
+
+.px-3 {
+  padding-left: var(--size-3x);
+  padding-right: var(--size-3x);
+}
+
+.py-1 {
+  padding-top: var(--size-1x);
+  padding-bottom: var(--size-1x);
+}
+
+.py-2 {
+  padding-top: var(--size-2x);
+  padding-bottom: var(--size-2x);
+}
+
+.py-3 {
+  padding-top: var(--size-3x);
+  padding-bottom: var(--size-3x);
+}
+
+/* Min-height utilities */
+.min-h-100vh {
+  min-height: 100vh;
+}
+
+.min-h-100 {
+  min-height: 100%;
+}
+
+.min-h-2 {
+  min-height: var(--size-2x);
+}
+
+.min-h-3 {
+  min-height: var(--size-3x);
+}
+
+.min-h-4 {
+  min-height: var(--size-4x);
+}
+
+.min-h-5 {
+  min-height: var(--size-5x);
+}
+
+.min-h-10 {
+  min-height: var(--size-10x);
+}
+
+/* List utilities */
+.list-none {
+  list-style: none;
+}
+
+/* Button elements */
+.btn-default {
+  background-color: var(--color-blue);
+  color: var(--color-white);
+  padding: var(--size-2x) var(--size-6x);
+  border: var(--border-size) solid var(--color-blue);
+  border-radius: var(--size-1x);
+  cursor: pointer;
+}
+
+.btn-sidebar {
+  background-color: var(--color-light-tan);
+  color: var(--color-dark-brown);
+  border: var(--border-size) solid var(--color-light-brown);
+  border-radius: var(--size-1x);
+  padding: var(--size-1x) var(--size-2x);
+  margin: var(--size-1x);
+  cursor: pointer;
+  flex-grow: 1;
+  text-align: left;
+}
+
+.btn-remove {
+  margin: 0;
+  padding: 0;
+  border: none;
+  min-width: auto;
+  background-color: transparent;
+}
+
+.btn-outline {
+  background-color: hsla(195, 100%, 100%, 50%);
+  border: var(--border-size) solid var(--color-blue);
+  color: var(--color-blue);
+}
+
+.btn:hover,
+.btn-default:hover {
+  background-color: var(--color-dark-blue);
+  border-color: var(--color-dark-blue);
+  outline: var(--border-size) solid var(--color-shadow-dark);
+}
+
+.btn-default.btn-outline:hover {
+  background-color: #fff;
+  color: var(--color-dark-blue);
+}
+
+.btn-remove:hover {
+  background-color: transparent;
+  border-color: transparent;
+  outline: none;
+}
+
+.outline-hover:hover {
+  outline: var(--border-size) solid var(--color-shadow-light);
+}
+
+.btn-sidebar:hover {
+  border: var(--border-size) solid var(--color-dark-brown);
+}
+
+/* Other */
+
+.cursor-pointer {
+  cursor: pointer;
+}

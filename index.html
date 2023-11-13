@@ -1,145 +1,216 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>TTS Assistant</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TTS Assistant</title>
 
-        <noscript>
-            <!-- If JavaScript is disabled, redirect to no-js.html after 2 seconds -->
-            <meta http-equiv="refresh" content="2;url=no-js.html" />
-        </noscript>
+    <noscript>
+      <!-- If JavaScript is disabled, redirect to no-js.html after 2 seconds -->
+      <meta http-equiv="refresh" content="2;url=no-js.html" />
+    </noscript>
 
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&family=PT+Sans&display=swap"
-            rel="stylesheet"
-        />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css"
-            integrity="sha512-4xo8blKMVCiXpTaLzQSLSw3KFOVPWhm/TRtuPVc4WG6kUgjH6J03IBuG7JZPkcWMxJ5huwaBpOpnwYElP/m6wg=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        />
-        <link rel="stylesheet" href="style.css" />
-    </head>
-    <style></style>
-    <body>
-        <div class="container">
-            <div class="main-area">
-                <div class="toolbar">
-                    <h1 class="app-name">TTS Assistant 🔊</h1>
-                </div>
-                <div class="content-area">
-                    <textarea placeholder="Paste your text here..."></textarea>
-                </div>
-            </div>
-            <div class="sidebar">
-                <div class="toolbar">Files</div>
-                <ul>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                    <li><span>test-sample</span><button>🗑️</button></li>
-                    <li>
-                        <span>lecture-notes-2025-03-01</span><button>🗑️</button>
-                    </li>
-                </ul>
-            </div>
-            <div class="footer">
-                <div class="footer-top">
-                    <select name="model">
-                        <option value="model1">Model 1</option>
-                        <option value="model2">Model 2</option>
-                    </select>
-                    <select name="voice">
-                        <option value="voice1">Voice 1</option>
-                        <option value="voice2">Voice 2</option>
-                    </select>
-                    <select name="format">
-                        <option value="mp3">MP3</option>
-                        <option value="wav">WAV</option>
-                    </select>
-                    <input
-                        type="text"
-                        placeholder="Filename"
-                        class="filename-input"
-                    />
-                </div>
-                <div class="footer-bottom">
-                    <button type="button">Submit</button>
-                    <button type="button">Save</button>
-                </div>
-            </div>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@900&family=PT+Sans&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./favicons/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./favicons/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./favicons/favicon-16x16.png"
+    />
+    <link rel="manifest" href="./favicons/site.webmanifest" />
+    <link
+      rel="mask-icon"
+      href="./favicons/safari-pinned-tab.svg"
+      color="#5bbad5"
+    />
+    <meta name="msapplication-TileColor" content="#00aba9" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css"
+      integrity="sha512-4xo8blKMVCiXpTaLzQSLSw3KFOVPWhm/TRtuPVc4WG6kUgjH6J03IBuG7JZPkcWMxJ5huwaBpOpnwYElP/m6wg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="./styles/vars.css" />
+    <link rel="stylesheet" href="./styles/global.css" />
+    <link rel="stylesheet" href="./styles/utils.css" />
+    <link rel="stylesheet" href="./styles/layout.css" />
+    <link rel="stylesheet" href="./styles/looks.css" />
+  </head>
+  <body id="app">
+    <div id="global-error" class="hidden"></div>
+    <div
+      id="page-loading"
+      class="page page-loading text-center block"
+      data-show="true"
+    >
+      <section class="main">
+        <div class="content-area py-3 px-2">
+          <div class="loading">
+            <div class="loading-text">... Loading TTS Assistant ...</div>
+            <div class="error hidden text-red mt-2">This is an error</div>
+          </div>
         </div>
-        <script type="module" src="scripts/main.js"></script>
-    </body>
+      </section>
+    </div>
+
+    <div id="page-settings" class="page page-settings flex" data-show="false">
+      <section class="main bg-light-tan-alpha outline rounded">
+        <menu class="toolbar bg-light-tan">
+          <li><h1 class="app-name">TTS Assistant 🔊</h1></li>
+        </menu>
+        <div class="content-area text-center py-3 px-2">
+          <div class="settings">
+            <div class="setting py-1">
+              <label for="openai-key" class="block mb-2"
+                >OpenAI Key - Saved locally, only used with the
+                API:&nbsp;</label
+              >
+              <input
+                type="text"
+                id="openai-key"
+                class="input-text"
+                style="width: 60ch; max-width: 80%"
+              />
+            </div>
+          </div>
+          <div class="credits">
+            <p class="mt-2 mb-1">
+              This app was created by
+              <a href="https://twitter.com/DavidBradbury" class="link"
+                >David Bradbury</a
+              >
+              and is not affiliated with OpenAI.
+            </p>
+            <p>
+              The source code is available on
+              <a
+                href="https://github.com/DavidBradbury/tts-assistant"
+                class="link"
+                >GitHub</a
+              >.
+            </p>
+          </div>
+        </div>
+      </section>
+      <div class="footer bg-light-tan-alpha outline rounded p-2">
+        <div class="footer-bottom flex justify-between items-center">
+          <div class="footer-bottom-left">&nbsp;</div>
+          <div class="footer-bottom-right">
+            <button
+              id="btn-settings-cancel"
+              type="button"
+              class="btn-default btn-outline hidden"
+              onclick="main.showMain()"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn-default"
+              onclick="main.saveApiKey();"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="page-main"
+      data-show="false"
+      class="page page-main mobile-block desktop-grid"
+      style="
+        grid-template-columns: 3fr 2fr;
+        grid-template-rows: auto 1fr auto;
+        gap: var(--size-6x) var(--size-3x);
+      "
+    >
+      <section class="main bg-light-tan-alpha outline rounded">
+        <menu class="toolbar bg-light-tan">
+          <li><h1 class="app-name">TTS Assistant 🔊</h1></li>
+        </menu>
+        <div class="content-area py-3 px-2">
+          <textarea
+            id="input-text"
+            class="p-2"
+            style="min-height: calc(var(--size-10x) + var(--size-5x))"
+            placeholder="Paste your text here..."
+          ></textarea>
+        </div>
+      </section>
+      <section class="sidebar bg-light-tan-alpha outline rounded">
+        <menu class="toolbar bg-light-tan">
+          <li><span class="h1">Files 📂</span></li>
+        </menu>
+        <ul
+          class="list-none py-2 px-1 m-0"
+          style="max-height: 50vh; overflow-y: auto"
+        >
+          <li
+            class="flex justify-between items-center mb-1"
+            style="width: calc(100% - var(--size-1x))"
+          >
+            <button class="btn-sidebar">test-sample</button
+            ><button class="btn-default btn-remove p-2 cursor-pointer">
+              ❌
+            </button>
+          </li>
+        </ul>
+      </section>
+      <section
+        class="footer bg-light-tan-alpha outline rounded p-2"
+        style="grid-column: 1 / 3"
+      >
+        <div class="footer-top flex flex-start items-center wrap mb-3">
+          <select id="model" name="model" class="select mr-2"></select>
+          <select id="voice" name="voice" class="select mr-2"></select>
+          <select id="format" name="format" class="select mr-2"></select>
+          <select id="speed" name="speed" class="select mr-2"></select>
+          <input
+            type="text"
+            placeholder="Filename"
+            class="input-text filename-input ml-auto"
+          />
+        </div>
+        <div class="footer-bottom flex justify-between items-center">
+          <div class="footer-bottom-left">
+            <button
+              type="button"
+              class="btn-default btn-outline"
+              onclick="main.showSettings()"
+            >
+              Settings
+            </button>
+          </div>
+          <div class="footer-bottom-right">
+            <button type="button" class="btn-default">Save</button>
+            <button type="button" class="btn-default">Generate</button>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script type="module" src="scripts/main.js"></script>
+  </body>
 </html>
