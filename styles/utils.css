@@ -271,6 +271,7 @@
   border-radius: var(--size-1x);
   padding: var(--size-1x) var(--size-2x);
   margin: var(--size-1x);
+  margin-bottom: 0;
   cursor: pointer;
   flex-grow: 1;
   text-align: left;
@@ -282,6 +283,14 @@
   border: none;
   min-width: auto;
   background-color: transparent;
+  filter: hue-rotate(50deg);
+}
+
+.btn-toolbar {
+  padding: var(--size-1x) var(--size-2x);
+  border: none;
+  background-color: var(--color-ui-brown);
+  color: var(--color-white);
 }
 
 .btn-outline {
@@ -306,6 +315,13 @@
   background-color: transparent;
   border-color: transparent;
   outline: none;
+  filter: hue-rotate(50deg) brightness(0.8);
+}
+
+.btn-toolbar:hover {
+  background-color: var(--color-dark-brown);
+  border-color: var(--color-dark-brown);
+  outline: var(--border-size) solid var(--color-shadow-dark);
 }
 
 .outline-hover:hover {
@@ -313,7 +329,12 @@
 }
 
 .btn-sidebar:hover {
-  border: var(--border-size) solid var(--color-dark-brown);
+  border: var(--border-size) solid var(--color-dark-brown) !important;
+}
+
+.btn-sidebar[data-selected="true"] {
+  background-color: var(--color-light-tan-alpha);
+  border: var(--border-size) solid var(--color-brown);
 }
 
 /* Other */

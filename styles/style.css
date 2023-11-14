@@ -249,10 +249,6 @@ textarea {
   margin-left: var(--size-2x);
 }
 
-.filename-input {
-  margin-left: auto;
-}
-
 @media (max-width: 768px) {
   .screen-primary {
     display: block;

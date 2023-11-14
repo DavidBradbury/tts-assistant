@@ -26,19 +26,22 @@ const main = (() => {
   let state = STATES.LOADING
   let db = null
   let apiKey = null
+  let activeFileId = null
 
   const init = async () => {
     try {
       console.log('Thanks for using TTS Assistant!')
       await load()
       await setupInitialState()
+      await refreshFileList()
+      await selectFirstFile()
     } catch (error) {
       console.error(error)
     }
   }
 
   const load = async () => {
-    const runTasks = [checkIndexDbSupport, setupUi, loadFiles]
+    const runTasks = [checkIndexDbSupport, setupUi]
     const results = await Promise.allSettled(runTasks.map((task) => task()))
 
     results.forEach((result, index) => {
@@ -49,11 +52,183 @@ const main = (() => {
     })
   }
 
+  const saveFile = async () => {
+    const textAreaValue = u('#input-text').one().val()
+    const inputFilename = u('#filename-input').one().val().trim()
+
+    // If the filename is empty, use the first 4 words of the text (Max 20 characters)
+    const filename =
+      inputFilename ||
+      textAreaValue // "Suggest" a filename based on the text.
+        .replace(/[^\w\s]|_/g, '') // Remove punctuation
+        .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
+        .toLowerCase()
+        .split(' ')
+        .slice(0, 4)
+        .join('-')
+        .substring(0, 20)
+
+    const fileData = {
+      filename: filename,
+      text: textAreaValue,
+      audio: null, // Placeholder for audio file
+    }
+
+    const transaction = db.transaction(STORE_NAME_FILES, 'readwrite')
+    const store = transaction.objectStore(STORE_NAME_FILES)
+    const request = store.add(fileData)
+
+    request.onsuccess = (event) => {
+      const id = event.target.result
+      console.log(`File with ID ${id} saved successfully.`)
+      showSaveSuccess('File saved successfully!')
+      refreshFileList()
+    }
+
+    request.onerror = (event) => {
+      console.error('Error saving the file to the database', event.target.error)
+      showError('Error saving the file to the database')
+    }
+  }
+
+  const refreshFileList = async () => {
+    const transaction = db.transaction(STORE_NAME_FILES, 'readonly')
+    const store = transaction.objectStore(STORE_NAME_FILES)
+    const request = store.openCursor()
+
+    // Clear the current list
+    const fileListElement = u('.sidebar ul').el()
+    // Store this incase we need to revert back to it
+    const revertHTML = fileListElement.innerHTML
+    fileListElement.innerHTML = ''
+
+    request.onsuccess = (event) => {
+      const cursor = event.target.result
+
+      if (cursor) {
+        const file = cursor.value
+        const key = cursor.key
+        const listItemHtml = `
+          <li class="flex justify-between items-center" style="width: calc(100% - var(--size-1x))">
+            <button class="btn-sidebar" data-id="${key}">${file.filename}</button>
+            <button class="btn-default btn-remove p-2 cursor-pointer" data-id="${key}">
+              ❌
+            </button>
+          </li>
+        `
+        const listItemElement = u().htmlToElement(listItemHtml)
+        fileListElement.appendChild(listItemElement)
+
+        cursor.continue() // Move to the next object in the store
+      } else {
+        // Add event listeners for file buttons
+        u('.btn-sidebar')
+          .els()
+          .forEach((button) => {
+            button.addEventListener('click', (e) => {
+              const fileId = e.target.getAttribute('data-id')
+              selectFile(fileId)
+            })
+          })
+
+        // Add event listeners for delete buttons
+        u('.btn-remove')
+          .els()
+          .forEach((button) => {
+            button.addEventListener('click', (e) => {
+              const idToDelete = e.target.getAttribute('data-id')
+              deleteFile(idToDelete)
+            })
+          })
+
+        updateUiSelectedFile()
+      }
+    }
+
+    request.onerror = (event) => {
+      // Revert the list back to the original HTML
+      fileListElement.innerHTML = revertHTML
+
+      console.error(
+        'Error fetching the files from the database',
+        event.target.error
+      )
+      showError('Error fetching the files from the database')
+    }
+  }
+
+  const deleteFile = (id) => {
+    const transaction = db.transaction(STORE_NAME_FILES, 'readwrite')
+    const store = transaction.objectStore(STORE_NAME_FILES)
+
+    const request = store.delete(Number(id))
+
+    request.onsuccess = () => {
+      console.log(`File with ID ${id} deleted successfully.`)
+      showSaveSuccess('File deleted successfully!')
+      refreshFileList()
+    }
+
+    request.onerror = (event) => {
+      console.error(
+        'Error deleting the file from the database',
+        event.target.error
+      )
+      showError('Error deleting the file from the database')
+    }
+  }
+
+  const selectFile = async (id) => {
+    const transaction = db.transaction(STORE_NAME_FILES, 'readonly')
+    const store = transaction.objectStore(STORE_NAME_FILES)
+    const request = store.get(Number(id))
+
+    request.onsuccess = (event) => {
+      const file = event.target.result
+      if (file) {
+        activeFileId = id
+        u('#input-text').one().val(file.text)
+        updateUiSelectedFile()
+        console.log(`File with ID ${id} is selected.`)
+      }
+    }
+
+    request.onerror = (event) => {
+      console.error(`Error retrieving file with ID ${id}:`, event.target.error)
+      showError(`Error retrieving file with ID ${id}`)
+    }
+  }
+
+  const updateUiSelectedFile = () => {
+    u('.btn-sidebar').attr('data-selected', false)
+    u(`.btn-sidebar[data-id="${activeFileId}"]`).attr('data-selected', true)
+  }
+
+  const selectFirstFile = async () => {
+    const transaction = db.transaction(STORE_NAME_FILES, 'readonly')
+    const store = transaction.objectStore(STORE_NAME_FILES)
+    const request = store.openCursor()
+
+    request.onsuccess = (event) => {
+      const cursor = event.target.result
+      if (cursor) {
+        selectFile(cursor.key)
+      } else {
+        console.log('No files to select.')
+      }
+    }
+
+    request.onerror = (event) => {
+      console.error('Error fetching the first file:', event.target.error)
+      showError('Error fetching the first file')
+    }
+  }
+
   const setupUi = async () => {
-    const modelSelect = u('#model').one().el()
-    const voiceSelect = u('#voice').one().el()
-    const formatSelect = u('#format').one().el()
-    const speedSelect = u('#speed').one().el()
+    const modelSelect = u('#model').el()
+    const voiceSelect = u('#voice').el()
+    const formatSelect = u('#format').el()
+    const speedSelect = u('#speed').el()
 
     OPEN_AI_VARS.model.forEach((model) => {
       const optionHtml = `<option value="${model}">${model}</option>`
@@ -128,7 +303,7 @@ const main = (() => {
     switch (state) {
       case STATES.SETTINGS:
         if (apiKey) {
-          u('#openai-key').one().el().value = '*'.repeat(apiKey.length)
+          u('#openai-key').el().value = '*'.repeat(apiKey.length)
           u('#btn-settings-cancel').one().removeClass('hidden')
         }
 
@@ -160,7 +335,7 @@ const main = (() => {
         }
 
         if (!db.objectStoreNames.contains(STORE_NAME_FILES)) {
-          db.createObjectStore(STORE_NAME_FILES, { keyPath: 'id' })
+          db.createObjectStore(STORE_NAME_FILES, { autoIncrement: true })
         }
 
         resolve(db)
@@ -191,7 +366,7 @@ const main = (() => {
   const saveApiKey = async () => {
     return new Promise((resolve, reject) => {
       try {
-        const input = u('#openai-key').one().el()
+        const input = u('#openai-key').el()
         const apiKeyValue = input.value
 
         // Don't save the API key if it's empty
@@ -246,15 +421,22 @@ const main = (() => {
     }, 8000)
   }
 
-  const loadFiles = async () => {
-    // todo
+  const showSaveSuccess = (message) => {
+    u('#global-save').one().removeClass('hidden').html(message)
+
+    setTimeout(() => {
+      u('#global-save').one().addClass('hidden')
+    }, 4000)
   }
 
   return {
     init,
     saveApiKey,
+    refreshFileList,
+    deleteFile,
     showSettings,
     showMain,
+    saveFile,
   }
 })()
 

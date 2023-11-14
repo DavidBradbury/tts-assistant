@@ -34,6 +34,15 @@ const utils = (selector) => {
       return api
     },
 
+    // Sets or gets the value of the element(s)
+    val: (value) => {
+      if (typeof value === 'undefined') {
+        return elements[0].value
+      }
+      elements.forEach((elem) => (elem.value = value))
+      return api
+    },
+
     // Removes the class from the element(s)
     removeClass: (className) => {
       elements.forEach((elem) => elem.classList.remove(className))
@@ -46,17 +55,19 @@ const utils = (selector) => {
       return api
     },
 
+    // Returns the api to access
+
     // Converts HTML string to a DOM Element
     htmlToElement: (html) => {
       const template = document.createElement('template')
-      template.innerHTML = html
+      template.innerHTML = html.trim()
       return template.content.firstChild
     },
 
     // Converts HTML string to DOM Elements (NodeList)
     htmlToElements: (html) => {
       const template = document.createElement('template')
-      template.innerHTML = html
+      template.innerHTML = html.trim()
       return template.content.firstChild
     },
 

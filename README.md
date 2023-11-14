@@ -6,6 +6,12 @@ TTS Assistant is a front-end app utilizing OpenAI's TTS API. Easily input text a
 
 ## History
 
+### Monday, Nov 13th, 2023
+
+Saving, loading, and deleting is now functional. Need to make it so it distinguishes
+between active files and new files. Once that's in, we can do some test requests,
+store the audio, display it to the user, add an export option, then we're done!
+
 ### Sunday, Nov 12th, 2023
 
 We're almost there! Restructured the UI to be easier to edit for new contributors. It

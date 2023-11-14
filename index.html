@@ -58,7 +58,8 @@
     <link rel="stylesheet" href="./styles/looks.css" />
   </head>
   <body id="app">
-    <div id="global-error" class="hidden"></div>
+    <div id="global-error" class="hidden banner"></div>
+    <div id="global-save" class="hidden banner"></div>
     <div
       id="page-loading"
       class="page page-loading text-center block"
@@ -163,21 +164,21 @@
       <section class="sidebar bg-light-tan-alpha outline rounded">
         <menu class="toolbar bg-light-tan">
           <li><span class="h1">Files 📂</span></li>
+          <li class="ml-auto">
+            <button
+              type="button"
+              class="btn-default btn-toolbar"
+              onclick="main.newFile()"
+              title="New File"
+            >
+              New file
+            </button>
+          </li>
         </menu>
         <ul
           class="list-none py-2 px-1 m-0"
           style="max-height: 50vh; overflow-y: auto"
-        >
-          <li
-            class="flex justify-between items-center mb-1"
-            style="width: calc(100% - var(--size-1x))"
-          >
-            <button class="btn-sidebar">test-sample</button
-            ><button class="btn-default btn-remove p-2 cursor-pointer">
-              ❌
-            </button>
-          </li>
-        </ul>
+        ></ul>
       </section>
       <section
         class="footer bg-light-tan-alpha outline rounded p-2"
@@ -189,9 +190,10 @@
           <select id="format" name="format" class="select mr-2"></select>
           <select id="speed" name="speed" class="select mr-2"></select>
           <input
+            id="filename-input"
             type="text"
             placeholder="Filename"
-            class="input-text filename-input ml-auto"
+            class="input-text ml-auto"
           />
         </div>
         <div class="footer-bottom flex justify-between items-center">
@@ -205,7 +207,13 @@
             </button>
           </div>
           <div class="footer-bottom-right">
-            <button type="button" class="btn-default">Save</button>
+            <button
+              type="button"
+              class="btn-default"
+              onclick="main.saveFile();"
+            >
+              Save
+            </button>
             <button type="button" class="btn-default">Generate</button>
           </div>
         </div>
