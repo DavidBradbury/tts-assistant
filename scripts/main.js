@@ -21,6 +21,7 @@ const STORE_NAME_SETTINGS = 'settings'
 const STORE_NAME_FILES = 'files'
 
 const OBJECT_STORE_OPEN_API_KEY = 'openai-api-key'
+const MAX_FILENAME_LENGTH = 40
 
 const main = (() => {
   let state = STATES.LOADING
@@ -33,8 +34,6 @@ const main = (() => {
       console.log('Thanks for using TTS Assistant!')
       await load()
       await setupInitialState()
-      await refreshFileList()
-      await selectFirstFile()
     } catch (error) {
       console.error(error)
     }
@@ -52,7 +51,16 @@ const main = (() => {
     })
   }
 
-  const saveFile = async () => {
+  const createNewFile = () => {
+    activeFileId = null
+
+    u('#input-text').one().val('')
+    u('#filename-input').one().val('')
+
+    redrawUi()
+  }
+
+  const saveFile = async (show = true) => {
     const textAreaValue = u('#input-text').one().val()
     const inputFilename = u('#filename-input').one().val().trim()
 
@@ -66,9 +74,9 @@ const main = (() => {
         .split(' ')
         .slice(0, 4)
         .join('-')
-        .substring(0, 20)
+        .substring(0, MAX_FILENAME_LENGTH)
 
-    const fileData = {
+    let fileData = {
       filename: filename,
       text: textAreaValue,
       audio: null, // Placeholder for audio file
@@ -76,18 +84,28 @@ const main = (() => {
 
     const transaction = db.transaction(STORE_NAME_FILES, 'readwrite')
     const store = transaction.objectStore(STORE_NAME_FILES)
-    const request = store.add(fileData)
+
+    let request
+    if (activeFileId === null) {
+      request = store.add(fileData)
+    } else {
+      request = store.put(fileData, Number(activeFileId))
+    }
 
     request.onsuccess = (event) => {
       const id = event.target.result
+      activeFileId = id
       console.log(`File with ID ${id} saved successfully.`)
-      showSaveSuccess('File saved successfully!')
-      refreshFileList()
+      if (show) showSaveSuccess('File saved successfully!')
+
+      // Update filename input to use the filename value in case
+      // the user didn't enter a filename
+      u('#filename-input').one().val(filename)
+      redrawUi()
     }
 
     request.onerror = (event) => {
-      console.error('Error saving the file to the database', event.target.error)
-      showError('Error saving the file to the database')
+      showError('Error saving the file to the database', event.target.error)
     }
   }
 
@@ -121,6 +139,7 @@ const main = (() => {
 
         cursor.continue() // Move to the next object in the store
       } else {
+        console.log('No more entries!')
         // Add event listeners for file buttons
         u('.btn-sidebar')
           .els()
@@ -140,20 +159,16 @@ const main = (() => {
               deleteFile(idToDelete)
             })
           })
-
-        updateUiSelectedFile()
       }
     }
 
     request.onerror = (event) => {
       // Revert the list back to the original HTML
       fileListElement.innerHTML = revertHTML
-
-      console.error(
+      showError(
         'Error fetching the files from the database',
         event.target.error
       )
-      showError('Error fetching the files from the database')
     }
   }
 
@@ -166,15 +181,11 @@ const main = (() => {
     request.onsuccess = () => {
       console.log(`File with ID ${id} deleted successfully.`)
       showSaveSuccess('File deleted successfully!')
-      refreshFileList()
+      redrawUi()
     }
 
     request.onerror = (event) => {
-      console.error(
-        'Error deleting the file from the database',
-        event.target.error
-      )
-      showError('Error deleting the file from the database')
+      showError('Error deleting the file from the database', event.target.error)
     }
   }
 
@@ -187,41 +198,115 @@ const main = (() => {
       const file = event.target.result
       if (file) {
         activeFileId = id
-        u('#input-text').one().val(file.text)
-        updateUiSelectedFile()
+        redrawUi(false, file)
         console.log(`File with ID ${id} is selected.`)
       }
     }
 
     request.onerror = (event) => {
-      console.error(`Error retrieving file with ID ${id}:`, event.target.error)
-      showError(`Error retrieving file with ID ${id}`)
+      showError(`Error retrieving file with ID ${id}`, event.target.error)
     }
   }
 
-  const updateUiSelectedFile = () => {
-    u('.btn-sidebar').attr('data-selected', false)
-    u(`.btn-sidebar[data-id="${activeFileId}"]`).attr('data-selected', true)
-  }
+  const generateSpeech = async () => {
+    if (!apiKey) {
+      showError('Please enter your OpenAI API key in the settings screen')
+      return
+    }
 
-  const selectFirstFile = async () => {
-    const transaction = db.transaction(STORE_NAME_FILES, 'readonly')
-    const store = transaction.objectStore(STORE_NAME_FILES)
-    const request = store.openCursor()
+    const textAreaValue = u('#input-text').one().val()
+    if (!textAreaValue) {
+      showError('Please enter text before generating speech')
+      return
+    }
 
-    request.onsuccess = (event) => {
-      const cursor = event.target.result
-      if (cursor) {
-        selectFile(cursor.key)
+    await saveFile(false)
+
+    // Retrieve the selected options and the input text
+    const model = u('#model').one().val()
+    const voice = u('#voice').one().val()
+    const responseFormat = u('#format').one().val()
+    const speed = parseFloat(u('#speed').one().val())
+
+    // Calculate the cost and show confirmation
+    const costPerThousandCharacters = OPEN_AI_VARS.cost[model]
+    const estimatedCost =
+      (textAreaValue.length / 1000) * costPerThousandCharacters
+    const confirmed = confirm(
+      `This will cost approximately $${estimatedCost.toFixed(
+        2
+      )}. Do you want to continue?`
+    )
+
+    if (!confirmed) return // Exit early if the user cancels
+
+    const requestBody = {
+      model: model,
+      input: textAreaValue,
+      voice: voice,
+      response_format: responseFormat,
+      speed: speed,
+    }
+
+    try {
+      const response = await makeOpenAIApiCall(requestBody)
+      if (
+        response.ok &&
+        response.headers.get('content-type') === 'audio/mpeg'
+      ) {
+        const audioBlob = await response.blob()
+        const audioUrl = URL.createObjectURL(audioBlob)
+
+        // Create the audio element
+        const audioElement = document.createElement('audio')
+        audioElement.src = audioUrl
+        audioElement.controls = true
+        audioElement.autoplay = true // Automatic?
+
+        // Test
+        document.body.appendChild(audioElement)
+
+        // Clean up the blob URL when the audio has finished playing
+        audioElement.onended = () => {
+          URL.revokeObjectURL(audioUrl)
+        }
       } else {
-        console.log('No files to select.')
+        console.error(
+          'The response did not contain an audio/mpeg content type.'
+        )
       }
+    } catch (error) {
+      console.error('Error calling TTS API:', error)
+    }
+  }
+
+  const makeOpenAIApiCall = async (data) => {
+    const response = await fetch('https://api.openai.com/v1/audio/speech', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!response.ok) {
+      const errorResponse = await response.json()
+      throw new Error(`API error: ${errorResponse.error.message}`)
     }
 
-    request.onerror = (event) => {
-      console.error('Error fetching the first file:', event.target.error)
-      showError('Error fetching the first file')
-    }
+    return response
+  }
+
+  const redrawUi = (refresh = true, file = null) => {
+    if (refresh) refreshFileList()
+    setTimeout(() => {
+      u(`.btn-sidebar`).attr('data-selected', false)
+      u(`.btn-sidebar[data-id="${activeFileId}"]`).attr('data-selected', true)
+      if (!file) return
+      u('#input-text').one().val(file.text)
+      u('#filename-input').one().val(file.filename)
+    }, 1)
   }
 
   const setupUi = async () => {
@@ -270,16 +355,20 @@ const main = (() => {
   const setupInitialState = async () => {
     db = await openDatabase()
     try {
+      // -- Data --
       const result = await getApiKey()
       apiKey = result.value
+
+      // -- UI --
+      // Update the filename input to use the const
+      u('#filename-input').attr('maxlength', MAX_FILENAME_LENGTH)
+      createNewFile()
     } catch (error) {
       console.log('API key not found, showing settings screen')
       updateState(STATES.SETTINGS)
       return
     }
 
-    console.log('API key found!')
-    console.log(apiKey)
     updateState(STATES.MAIN)
   }
 
@@ -412,8 +501,8 @@ const main = (() => {
     })
   }
 
-  const showError = (message) => {
-    console.error(message)
+  const showError = (message, error = null) => {
+    console.error(message, error)
     u('#global-error').one().removeClass('hidden').html(message)
 
     setTimeout(() => {
@@ -436,7 +525,9 @@ const main = (() => {
     deleteFile,
     showSettings,
     showMain,
+    createNewFile,
     saveFile,
+    generateSpeech,
   }
 })()
 

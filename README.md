@@ -6,6 +6,13 @@ TTS Assistant is a front-end app utilizing OpenAI's TTS API. Easily input text a
 
 ## History
 
+### Tuesday, Nov 14th, 2023
+
+Got it nearly functional! It distinguishes between new and active files and can make
+a call to the API. Crudely, I have it appending the audio to the page without styling
+just to make sure it works. Next up is storing the audio, displaying it to the user
+in a nice way, and adding an export option!
+
 ### Monday, Nov 13th, 2023
 
 Saving, loading, and deleting is now functional. Need to make it so it distinguishes

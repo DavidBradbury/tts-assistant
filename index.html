@@ -168,7 +168,7 @@
             <button
               type="button"
               class="btn-default btn-toolbar"
-              onclick="main.newFile()"
+              onclick="main.createNewFile()"
               title="New File"
             >
               New file
@@ -214,7 +214,13 @@
             >
               Save
             </button>
-            <button type="button" class="btn-default">Generate</button>
+            <button
+              type="button"
+              class="btn-default"
+              onclick="main.generateSpeech();"
+            >
+              Generate
+            </button>
           </div>
         </div>
       </section>
