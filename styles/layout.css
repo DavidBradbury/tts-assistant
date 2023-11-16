@@ -49,6 +49,12 @@
   color: var(--color-white);
 }
 
+#audio-player-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 
 @media (max-width: 768px) {
   .page-main {

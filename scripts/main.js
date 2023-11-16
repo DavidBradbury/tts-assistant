@@ -32,11 +32,26 @@ const main = (() => {
   const init = async () => {
     try {
       console.log('Thanks for using TTS Assistant!')
+      setupAccessibility()
       await load()
       await setupInitialState()
     } catch (error) {
-      console.error(error)
+      showError(error)
     }
+  }
+
+  const setupAccessibility = () => {
+    const uBody = u('body')
+    // Add a class to the body when the user is using the keyboard
+    uBody.el().addEventListener('keydown', function (event) {
+      // Detect tab key
+      if (event.keyCode === 9) uBody.addClass('using-keyboard')
+    })
+
+    // Remove the class when the user clicks
+    uBody.el().addEventListener('mousedown', function (event) {
+      uBody.removeClass('using-keyboard')
+    })
   }
 
   const load = async () => {
@@ -56,6 +71,7 @@ const main = (() => {
 
     u('#input-text').one().val('')
     u('#filename-input').one().val('')
+    clearAudioPlayer()
 
     redrawUi()
   }
@@ -64,10 +80,14 @@ const main = (() => {
     const textAreaValue = u('#input-text').one().val()
     const inputFilename = u('#filename-input').one().val().trim()
 
-    // If the filename is empty, use the first 4 words of the text (Max 20 characters)
+    if (!textAreaValue) {
+      showError('Please enter text before saving!')
+      return
+    }
+
     const filename =
       inputFilename ||
-      textAreaValue // "Suggest" a filename based on the text.
+      textAreaValue
         .replace(/[^\w\s]|_/g, '') // Remove punctuation
         .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
         .toLowerCase()
@@ -76,10 +96,30 @@ const main = (() => {
         .join('-')
         .substring(0, MAX_FILENAME_LENGTH)
 
+    // Retrieve the audio blob from the audio element if it exists
+    let audioBlob = null
+    const audioElement = u('audio').el()
+    if (audioElement) {
+      const audioSrc = audioElement.querySelector('source').src
+      audioBlob = await fetch(audioSrc).then((res) => res.blob())
+    }
+
+    const audioSettings = {
+      model: u('#model').one().val(),
+      voice: u('#voice').one().val(),
+      format: u('#format').one().val(),
+      speed: parseFloat(u('#speed').one().val()),
+    }
+
     let fileData = {
       filename: filename,
       text: textAreaValue,
-      audio: null, // Placeholder for audio file
+      audio: audioBlob
+        ? {
+            blob: audioBlob,
+            settings: audioSettings,
+          }
+        : null,
     }
 
     const transaction = db.transaction(STORE_NAME_FILES, 'readwrite')
@@ -139,7 +179,6 @@ const main = (() => {
 
         cursor.continue() // Move to the next object in the store
       } else {
-        console.log('No more entries!')
         // Add event listeners for file buttons
         u('.btn-sidebar')
           .els()
@@ -198,8 +237,17 @@ const main = (() => {
       const file = event.target.result
       if (file) {
         activeFileId = id
+        if (file.audio && file.audio.blob) {
+          const audioSettings = file.audio.settings
+          u('#model').one().val(audioSettings.model)
+          u('#voice').one().val(audioSettings.voice)
+          u('#format').one().val(audioSettings.format)
+          u('#speed').one().val(audioSettings.speed.toString())
+          showAudioPlayer(file.audio.blob, audioSettings.format)
+        }
+
+        if (!file.audio) clearAudioPlayer()
         redrawUi(false, file)
-        console.log(`File with ID ${id} is selected.`)
       }
     }
 
@@ -249,33 +297,23 @@ const main = (() => {
     }
 
     try {
+      showAudioPlayer()
       const response = await makeOpenAIApiCall(requestBody)
-      if (
-        response.ok &&
-        response.headers.get('content-type') === 'audio/mpeg'
-      ) {
+      if (response.ok) {
         const audioBlob = await response.blob()
-        const audioUrl = URL.createObjectURL(audioBlob)
+        const contentType = response.headers.get('content-type')
 
-        // Create the audio element
-        const audioElement = document.createElement('audio')
-        audioElement.src = audioUrl
-        audioElement.controls = true
-        audioElement.autoplay = true // Automatic?
-
-        // Test
-        document.body.appendChild(audioElement)
-
-        // Clean up the blob URL when the audio has finished playing
-        audioElement.onended = () => {
-          URL.revokeObjectURL(audioUrl)
-        }
+        showAudioPlayer(audioBlob, contentType)
+        await saveFile(true)
       } else {
         console.error(
-          'The response did not contain an audio/mpeg content type.'
+          'Error calling TTS API:',
+          response.status,
+          response.statusText
         )
       }
     } catch (error) {
+      clearAudioPlayer()
       console.error('Error calling TTS API:', error)
     }
   }
@@ -292,10 +330,80 @@ const main = (() => {
 
     if (!response.ok) {
       const errorResponse = await response.json()
+      showError(`API error: ${errorResponse.error.message}`)
       throw new Error(`API error: ${errorResponse.error.message}`)
     }
 
     return response
+  }
+
+  const showAudioPlayer = (audioBlob = null) => {
+    const audioPlayerContainer = u('#audio-player-container').el()
+    clearAudioPlayer()
+
+    if (audioBlob) {
+      const audioUrl = URL.createObjectURL(audioBlob)
+      let mimeType = audioBlob.type
+
+      const audioElement = `
+          <audio class='mt-3 rounded' controls>
+              <source src="${audioUrl}" type="${mimeType}">
+              Your browser does not support the audio element.
+          </audio>
+          <button class="btn-default btn-toolbar mt-3 ml-3" onclick="main.exportAudio()">Download</button>
+      `
+      audioPlayerContainer.innerHTML = audioElement
+    } else {
+      audioPlayerContainer.innerHTML = `<div class='p-2'>Loading audio...</div>`
+    }
+  }
+
+  const exportAudio = () => {
+    const audioElement = u('audio').el()
+    if (audioElement) {
+      const sourceElement = audioElement.querySelector('source')
+      if (sourceElement && sourceElement.src) {
+        try {
+          const filename = u('#filename-input').one().val().trim()
+          const audioType = sourceElement.type
+
+          console.log('Exporting audio:', filename, audioType)
+
+          const extensionMap = {
+            'audio/mpeg': 'mp3',
+            'audio/opus': 'opus',
+            'audio/aac': 'aac',
+            'audio/flac': 'flac',
+          }
+
+          const fileExtension = extensionMap[audioType]
+
+          const link = document.createElement('a')
+          link.href = sourceElement.src
+          link.download = `${filename}.${fileExtension}`
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        } catch (error) {
+          showError('Error exporting audio', error)
+        }
+      }
+    }
+  }
+
+  const clearAudioPlayer = () => {
+    const audioPlayerContainer = u('#audio-player-container').el()
+    const audioElement = audioPlayerContainer.querySelector('audio')
+
+    // Make sure we're not leaking memory by revoking the object URL
+    if (audioElement) {
+      const sourceElement = audioElement.querySelector('source')
+      if (sourceElement && sourceElement.src) {
+        URL.revokeObjectURL(sourceElement.src)
+      }
+    }
+
+    audioPlayerContainer.innerHTML = ''
   }
 
   const redrawUi = (refresh = true, file = null) => {
@@ -418,20 +526,27 @@ const main = (() => {
 
       request.onupgradeneeded = (event) => {
         const db = event.target.result
-
         if (!db.objectStoreNames.contains(STORE_NAME_SETTINGS)) {
           db.createObjectStore(STORE_NAME_SETTINGS, { keyPath: 'id' })
         }
-
         if (!db.objectStoreNames.contains(STORE_NAME_FILES)) {
           db.createObjectStore(STORE_NAME_FILES, { autoIncrement: true })
         }
-
-        resolve(db)
       }
 
       request.onsuccess = (event) => {
-        resolve(event.target.result)
+        const db = event.target.result
+        db.onerror = (event) => {
+          console.error('Database error: ' + event.target.errorCode)
+        }
+        resolve(db)
+      }
+
+      request.onblocked = (event) => {
+        console.error('Database opening blocked.')
+        showError(
+          'Database opening blocked. Other tabs may be using the database. Please close them and try again.'
+        )
       }
     })
   }
@@ -505,6 +620,8 @@ const main = (() => {
     console.error(message, error)
     u('#global-error').one().removeClass('hidden').html(message)
 
+    // Todo: Replace with a better solution so multiple errors can be shown
+    // And don't get removed due to the timeout
     setTimeout(() => {
       u('#global-error').one().addClass('hidden')
     }, 8000)
@@ -528,6 +645,7 @@ const main = (() => {
     createNewFile,
     saveFile,
     generateSpeech,
+    exportAudio,
   }
 })()
 

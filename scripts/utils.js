@@ -43,15 +43,15 @@ const utils = (selector) => {
       return api
     },
 
-    // Removes the class from the element(s)
-    removeClass: (className) => {
-      elements.forEach((elem) => elem.classList.remove(className))
-      return api
-    },
-
     // Adds the class to the element(s)
     addClass: (className) => {
       elements.forEach((elem) => elem.classList.add(className))
+      return api
+    },
+
+    // Removes the class from the element(s)
+    removeClass: (className) => {
+      elements.forEach((elem) => elem.classList.remove(className))
       return api
     },
 

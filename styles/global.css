@@ -2,8 +2,8 @@ body {
   height: 100vh;
   margin: 0;
   background: var(--color-light-yellow) url("./tts-bg.jpg") no-repeat;
-  background-size: auto 65%;
-  background-position: center bottom -25%;
+  background-size: auto 55%;
+  background-position: center bottom -15%;
   background-attachment: fixed;
   font-family: "PT Sans", sans-serif;
   font-size: 16px;
@@ -98,4 +98,23 @@ textarea {
 
 select {
   cursor: pointer;
+}
+
+.using-keyboard a:focus-visible,
+.using-keyboard button:focus-visible,
+.using-keyboard input:focus-visible,
+.using-keyboard textarea:focus-visible,
+.using-keyboard select:focus-visible {
+  outline: 5px solid var(--color-dark-teal);
+  background-color: #fff;
+  color: #000;
+}
+
+.screenreader-only {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
 }
