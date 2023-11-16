@@ -604,6 +604,7 @@ const main = (() => {
         const request = store.put(apiKeyObject)
 
         request.onsuccess = () => {
+          apiKey = apiKeyValue
           input.value = '' // Clear the input
           showMain()
           resolve()
